@@ -1,5 +1,10 @@
 language: sh
 
+addons:
+  apt:
+    packages:
+      - zsh
+
 script:
 - zsh bootstrap.sh
 
