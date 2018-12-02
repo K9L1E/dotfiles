@@ -1,4 +1,5 @@
 language: sh
 
 script:
-  bootstrap.sh
+- bootstrap.sh
+
