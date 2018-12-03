@@ -19,5 +19,5 @@ for d in backup swap undo; do
 done
 # setup vim plugins
 [ ! -f $HOME/.vim/autoload/plug.vim ] && curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-# vim -u <(sed '/color/d' $HOME/.vimrc) -c ":PlugInstall|PlugStatus|PlugUpgrade|PlugUpdate|q|q"
+vim -u <(sed '/color/d' $HOME/.vimrc) -c ":PlugInstall|PlugStatus|PlugUpgrade|PlugUpdate|q|q"
 
