@@ -6,7 +6,7 @@ export PATH=$PATH:/usr/local/sbin
 # https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg
 export TERM="xterm-256color"
 
-source /usr/local/Cellar/antigen/2.2.3/share/antigen/antigen.zsh
+source ~/.antigen/bin/antigen.zsh
  
 antigen use oh-my-zsh
  
