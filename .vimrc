@@ -1,11 +1,35 @@
 "-----------------------------------------------------------------------------
-"
+" Vundle Installer
 "-----------------------------------------------------------------------------
 "
-" Panthogen - Calls to plugin administration
-silent! call pathogen#runtime_append_all_bundles()
-silent! call pathogen#helptags()
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'shougo/neocomplete.vim'
+Plugin 'lambdalisue/vim-pyenv'
+"Plugin 'davidhalter/jedi-vim'
+Plugin 'Lokaltog/powerline'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'fatih/vim-go'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'Yggdroot/indentLine'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+"
+"
 " Identify platform
 silent function! OSX()
     return has('macunix')
@@ -21,7 +45,6 @@ endfunction
 "-----------------------------------------------------------------------------
 " Basics
 "-----------------------------------------------------------------------------
-set nocompatible
 set number
 if version >= 703
   set relativenumber
@@ -126,6 +149,9 @@ set cursorline                  " Highlight current line
 set cursorcolumn                " Highlight current column
 "set debug=msg                   " Show error messages longer than one second
 
+hi CursorLine   ctermbg=235 guibg='#262626'      
+hi CursorColumn ctermbg=235 guibg='#262626'
+
 
 augroup CursorColumnInActiveWindow
 autocmd!
@@ -139,10 +165,15 @@ highlight clear LineNr          " Current line number row will have same backgro
 let g:CSApprox_hook_post = ['hi clear SignColumn']
 
 
-" comments italic
+" comments italic: TMUX and iterm
 " https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
-let &t_ZH="\e[3m"
-let &t_ZR="\e[23m"
+if exists('$TMUX')
+    let &t_ZH="\e[3m"
+    let &t_ZR="\e[23m"
+else
+    let &t_ZH="\e[3m"
+    let &t_ZR="\e[23m"
+endif
 highlight Comment term=none cterm=italic gui=italic
 
 
@@ -185,16 +216,16 @@ highlight StatusLineUnmodifiableNC     term=reverse      cterm=reverse      cter
 
 
 " StatusLine Terminal
-hi User1 ctermbg=gray ctermfg=black
-hi User2 ctermbg=blue ctermfg=black
-hi User3 ctermbg=green ctermfg=black
-hi User4 ctermbg=gray ctermfg=black
-hi User5 ctermbg=blue ctermfg=black
-hi User6 ctermbg=green ctermfg=black
-hi User7 ctermbg=gray ctermfg=black
-hi User8 ctermbg=blue ctermfg=black
-hi User9 ctermbg=green ctermfg=black
-hi User0 ctermbg=red ctermfg=black
+hi User1  ctermfg=white  ctermbg=88
+hi User2  ctermfg=black  ctermbg=202
+hi User3  ctermfg=black  ctermbg=226
+hi User4  ctermfg=black  ctermbg=29
+" hi User5  ctermfg=black  ctermbg=blue
+" hi User6  ctermfg=black  ctermbg=green
+hi User7  ctermfg=white  ctermbg=88
+hi User8  ctermfg=white  ctermbg=67
+hi User9  ctermfg=white  ctermbg=126
+hi User0  ctermfg=black  ctermbg=88
 
 " Statusline GUI
 hi User1 guifg=#ffdad8  guibg=#880c0e
@@ -217,7 +248,7 @@ endfunction
 
 set statusline=
 set statusline+=%7*\[%n]                                  "buffernr
-set statusline+=%1*\ %<%F\                                "File+path
+set statusline+=%1*\ %<%f\                                "File+path
 set statusline+=%2*\ %y\                                  "FileType
 set statusline+=%3*\ %{''.(&fenc!=''?&fenc:&enc).''}      "Encoding
 set statusline+=%3*\ %{(&bomb?\",BOM\":\"\")}\            "Encoding2
@@ -268,17 +299,30 @@ set nojoinspaces                " Prevents inserting two spaces after punctuatio
 set splitright                  " Puts new vsplit windows to the right of the current
 set splitbelow                  " Puts new split windows to the bottom of the current
 set shiftwidth=2
-set softtabstop=2
+
+" Pyhton settings
+au BufNewFile,BufRead *.py
+    \ set tabstop=4        |
+    \ set softtabstop=4    |
+    \ set shiftwidth=4     |
+    "\ set textwidth=79     |
+    \ set expandtab        |
+    \ set autoindent       |
+    \ set fileformat=unix  |
 
 "-----------------------------------------------------------------------------
 "
 " Dealing with Whitespaces
 "
 " Highlight extra and unwanted whitespaces at the end of the line
-highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
+" highlight ExtraWhitespace cterm=underline ctermfg=202
+highlight ExtraWhitespace ctermfg=214
 
+" set list listchars=tab:»-,trail:·,extends:»,precedes:«
+set list listchars=tab:»-,trail:·,extends:»,precedes:«
 " Highlight unwanted whitespaces only of specific file types
-autocmd! BufEnter _vimrc,.vimrc,*.cmd,*.sh,*.sql :match ExtraWhitespace /\s\+$/
+" autocmd! BufEnter _vimrc,.vimrc,*.cmd,*.sh,*.sql :match ExtraWhitespace /\s\+$/
+autocmd! BufEnter * :match ExtraWhitespace /\s\+$/
 
 " Function to remove Whitespaces
 fun! TrimWhitespace()
@@ -348,22 +392,6 @@ let g:neocomplete#enable_auto_select = 0
 
 
 "-----------------------------------------------------------------------------
-" NERDTree
-"-----------------------------------------------------------------------------
-" Toggle the NERD Tree on an off with F7
-nmap <F7> :NERDTreeToggle<CR>
-"
-" Close the NERD Tree with Shift-F7
-nmap <C-F7> :NERDTreeClose<CR>
-
-" Show the bookmarks table on startup
-" let NERDTreeShowBookmarks=1
-
-
-"-----------------------------------------------------------------------------
-
-
-"-----------------------------------------------------------------------------
 " Fugitive
 "-----------------------------------------------------------------------------
 autocmd User fugitive
@@ -418,41 +446,9 @@ nmap ,B <Plug>(easymotion-overwin-w)
 " "-----------------------------------------------------------------------------
 " " Incsearch
 " "-----------------------------------------------------------------------------
-" " map /  <Plug>(incsearch-forward)
-" " map ?  <Plug>(incsearch-backward)
-" " map g/ <Plug>(incsearch-stay)
-"
-" " Remove highlighting afiter cursor move
-" " let g:incsearch#auto_nohlsearch = 1
-" " map n  <Plug>(incsearch-nohl-n)
-" " map N  <Plug>(incsearch-nohl-N)
 "
 " Turn off that stupid highlight search
 nnoremap <silent> ,n :nohls<CR>
-"
-" " error and warning messages with search command don't save into |message-history|.
-" let g:incsearch#do_not_save_error_message_history = 1
-"
-" " map <C-j> <Plug>(incsearch-scroll-f)
-" " map <C-k> <Plug>(incsearch-scroll-b)
-"
-"
-" " You can use other keymappings like <C-l> instead of <CR> if you want to
-" " use these mappings as default search and somtimes want to move cursor with
-" " EasyMotion.
-" function! s:incsearch_config(...) abort
-"   return incsearch#util#deepextend(deepcopy({
-"   \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-"   \   'keymap': {
-"   \     "\<CR>": '<Over>(easymotion)'
-"   \   },
-"   \   'is_expr': 0
-"   \ }), get(a:, 1, {}))
-" endfunction
-"
-" noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
-" noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
-" noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
 
 
 "-----------------------------------------------------------------------------
@@ -460,12 +456,12 @@ nnoremap <silent> ,n :nohls<CR>
 "-----------------------------------------------------------------------------
 
 " Add line without entering insert mode
-nnoremap <S-Enter> O<Esc>
+"nnoremap <S-O> O<Esc>
 nnoremap <CR> o<Esc>
 
 " Make horizontal scrolling easier
-nnoremap <C-l> 10zl
-nnoremap <C-h> 10zh
+nnoremap <S-l> 10zl
+nnoremap <S-h> 10zh
 
 
 " gvimdiff: jump up/down to next difference
@@ -506,13 +502,11 @@ cnoremap kk <esc><space>
 inoremap jj <esc>
 cnoremap jj <esc>
 
-
 " System default for mappings is now the "," character
 let mapleader = ","
 
 " cd to the directory containing the file in the buffer
 nnoremap <silent> ,cd :lcd %:h<CR>
-
 
 " Replace
 " replace one word by buffer
@@ -529,13 +523,6 @@ nnoremap ,vu :source $MYVIMRC<CR><C-w>=:nohls<CR>
 noremap <C-Tab> gt
 noremap <C-S-Tab> gT
 
-" fs - Fullscreen
-" ms - Minimum Size
-" ds - Default Size
-nnoremap ,fs :set lines=9999<CR>:set columns=9999<CR><C-w>=
-nnoremap ,ms :set lines=50<CR>:set columns=50<CR><C-w>=
-nnoremap ,ds :set lines=60<CR>:set columns=125<CR><C-w>=
-
 " Resize Windows
 nnoremap ,e :resize +10<CR>
 nnoremap ,c :resize -10<CR>
@@ -548,10 +535,20 @@ nnoremap ,p :set paste<CR>o<esc>"*]p:set nopaste<CR>
 " Copy all lines of file
 nnoremap ,a gg"+yG
 
+"-----------------------------------------------------------------------------
+" NERDTree
+"-----------------------------------------------------------------------------
+" Toggle/Untoggle the NERD Tree on an off with F7
+nmap <C-k> :NERDTreeToggle<CR>
+
+let NERDTreeQuitOnOpen = 1
+
+"-----------------------------------------------------------------------------
+
 
 set directory=~/.vim/swap
 set undodir=~/.vim/undo
-set backupdir=~/.vim/backup   " keep swap files here
+set backupdir=~/.vim/backup
 
 " ansible-vim settings
 let g:ansible_name_highlight = 'd'
@@ -559,13 +556,65 @@ let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Statement'
 let g:ansible_with_keywords_highlight = 'Special'
 
-" Change Cursor shape in insert modus
-let &t_SI = "\<Esc>]1337;CursorShape=1\x7"
-let &t_EI = "\<Esc>]1337;CursorShape=0\x7"
+" Change Cursor shape in insert modus with respect to tmux
+if exists('$TMUX')
+    let &t_SI = "\e[5 q"
+    let &t_SR = "\e[4 q"
+    let &t_EI = "\e[2 q"
+else
+    let &t_SI = "\e[5 q"
+    let &t_SR = "\e[4 q"
+    let &t_EI = "\e[2 q"
+endif
 
 " Command mode when enter vim
 autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
 " Insert mode when leaving vim
 autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
 
+" Enable folding
+set foldmethod=manual
+" set foldlevel=99
+
+" Default settings syntasic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_quiet_messages = { "type": "style" , "regex": ['^.*\[bad\-whitespace\].*Exactly one space required before assignment$', '^.*\[line\-too\-long\].*Line too long.*$','^.*\[missing\-docstring\].*Missing .* docstring$' ]}
+
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <C-w>E :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+
+" Remap Str-w to ,w to easiery switch between splitted windows
+nnoremap <silent> ,h <C-w>h
+nnoremap <silent> ,j <C-w>j
+nnoremap <silent> ,k <C-w>k
+nnoremap <silent> ,l <C-w>l
+
+"----------------------------------------------------------------------------
+" indentLine
+"----------------------------------------------------------------------------
+
+let g:indentLine_enabled = 1
+
+" let g:indentLine_setConceal = 0
+let g:indentLine_first_char = '·'
+let g:indentLine_char = '·'
+let g:indentLine_showFirstIndentLevel = 1
+" let g:indentLine_concealcursor = 'inc'
+" let g:indentLine_conceallevel = 1
+
+" Vim
+let g:indentLine_color_term = 239
+" Background (Vim, GVim)
+let g:indentLine_bgcolor_term = 234
+
+
+" Syntax highlight is synchronized in 100 lines.
+let g:markdown_minlines = 100
 
